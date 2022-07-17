@@ -22,7 +22,7 @@ func (st *stack) pop() bool {
 	}
 }
 
-// Return top element of stack or flase if the stack is already empty
+// Return top element of stack or false if the stack is already empty
 func (st *stack) top() string {
 	if st.isempty() {
 		return ""
