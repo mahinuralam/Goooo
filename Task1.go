@@ -176,6 +176,7 @@ func evaluate(infix string) {
 		}
 	}
 
+	// The total sum is on the top of the operand stack
 	fmt.Print("Ans: ", operand.top())
 }
 
