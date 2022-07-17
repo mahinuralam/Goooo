@@ -181,7 +181,7 @@ func evaluate(infix string) {
 }
 
 func main() {
-	infix := "((1+2)*(4/2))"
-	postfix := convertToPostfix(infix)
-	evaluate(postfix)
+	infixEquation := "((1+2)*(4/2))"
+	postfixEquation := convertToPostfix(infixEquation)
+	evaluate(postfixEquation)
 }
