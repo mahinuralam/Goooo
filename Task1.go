@@ -39,20 +39,20 @@ func (st *stack) push(str string) {
 }
 
 // Function for integer to string conversion
-func int_to_string(number int) string {
-	var string_representation string = fmt.Sprint(number)
-	return string_representation
+func intToString(number int) string {
+	var str string = fmt.Sprint(number)
+	return str
 }
 
 // Function for string to integer conversion
-func string_to_int(string_representation string) int {
-	var number int = 0
-	for i := 0; i < len(string_representation); i++ {
-		number *= 10
-		var digit int = int(string_representation[i] - '0')
-		number += digit
+func stringToInt(str string) int {
+	var num int = 0
+	for i := 0; i < len(str); i++ {
+		num *= 10
+		var digit int = int(str[i] - '0')
+		num += digit
 	}
-	return number
+	return num
 }
 
 // Function to return precedence of operators
@@ -140,7 +140,7 @@ func evaluate(infix string) {
 
 				opchar := string(equ[j])
 				var val int
-				val = string_to_int(opchar)
+				val = stringToInt(opchar)
 				if val < 0 || val > 9 {
 					break
 				}
@@ -158,19 +158,19 @@ func evaluate(infix string) {
 				var tmp1 int
 				opchar1 := operand.top()
 				operand.pop()
-				tmp1 = string_to_int(opchar1)
+				tmp1 = stringToInt(opchar1)
 
 				var tmp2 int
 				opchar2 := operand.top()
 				operand.pop()
-				tmp2 = string_to_int(opchar2)
+				tmp2 = stringToInt(opchar2)
 
 				opchar3 := operator.top()
 				operator.pop()
 
 				var now int = applyOp(tmp2, tmp1, opchar3)
 
-				tmp3 := int_to_string(now)
+				tmp3 := intToString(now)
 				operand.push(tmp3)
 			}
 		}
