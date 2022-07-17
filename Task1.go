@@ -2,243 +2,185 @@ package main
 
 import (
 	"fmt"
-	"strconv"
 )
 
 type stack []string
 
+// Check is the stack has elements of the stack is empty
 func (st *stack) isempty() bool {
-	return len(*st) == 0;
+	return len(*st) == 0
 }
 
-func (st *stack) push(str string) {
-	*st = append(*st, str);
-}
-
+// Remove top element of stack or flase if the stack is already empty
 func (st *stack) pop() bool {
-	if(st.isempty()){
-		return false;
+	if st.isempty() {
+		return false
 	} else {
-		index := len(*st) - 1;
-		*st = (*st)[:index];
-		return true;
+		index := len(*st) - 1
+		*st = (*st)[:index]
+		return true
 	}
 }
 
+// Return top element of stack or flase if the stack is already empty
 func (st *stack) top() string {
-	if( st.isempty() ) {
-		return "";
+	if st.isempty() {
+		return ""
 	} else {
-		index := len(*st) - 1;
-		element := (*st)[index];
-		return element;
+		index := len(*st) - 1
+		element := (*st)[index]
+		return element
 	}
 }
 
-func precedence(str string) int {
-	if(str == "^") {
-		return 3;
-	} else if(str == "/" || str == "*") {
-		return 2;
-	} else if(str == "+" || str == "-") {
-		return 1;
+// Push a new value onto the stack
+func (st *stack) push(str string) {
+	*st = append(*st, str)
+}
+
+// Function for integer to string conversion
+func int_to_string(number int) string {
+	var string_representation string = fmt.Sprint(number)
+	return string_representation
+}
+
+// Function for string to integer conversion
+func string_to_int(string_representation string) int {
+	var number int = 0
+	for i := 0; i < len(string_representation); i++ {
+		number *= 10
+		var digit int = int(string_representation[i] - '0')
+		number += digit
+	}
+	return number
+}
+
+// Function to return precedence of operators
+func prec(s string) int {
+	if (s == "/") || (s == "*") {
+		return 2
+	} else if (s == "+") || (s == "-") {
+		return 1
 	} else {
-		return -1;
+		return -1
 	}
 }
 
+// Function to convert infix equation to postfix equation
+func convertToPostfix(infix string) string {
+	var st stack
+	var postfix string
+	for _, char := range infix {
+		opchar := string(char)
+		// if scanned character is operand and add it to the postfix string
+		if (char >= 'a' && char <= 'z') || (char >= 'A' && char <= 'Z') || (char >= '0' && char <= '9') {
+			postfix = postfix + opchar
+		} else if char == '(' { // if scanned character is open bracket push to the stack
+			st.push(opchar)
+		} else if char == ')' {
+			for st.top() != "(" { // if scanned character is open closing bracket add all previous elements to the string
+				postfix = postfix + st.top()
+				st.pop()
+			}
+			st.pop()
+		} else {
+			for !st.isempty() && prec(opchar) <= prec(st.top()) { // While the stack is not empty add all previous elements to the string
+				postfix = postfix + st.top()
+				st.pop()
+			}
+			st.push(opchar)
+		}
+	}
+
+	// Pop all the remaining elements from the stack
+	for !st.isempty() {
+		postfix = postfix + st.top()
+		st.pop()
+	}
+
+	return postfix
+}
+
+// Function to find the result of the operation on two numbers
 func applyOp(a int, b int, c string) int {
 
-	var val int;
+	var val int
 
-	switch (c) {
-		case "+" : val =  a + b;
-		case "-" : val =  a - b;
-		case "*" : val =  a * b;
-		case "/" : val =  a / b;
+	switch c {
+	case "+":
+		val = a + b
+	case "-":
+		val = a - b
+	case "*":
+		val = a * b
+	case "/":
+		val = a / b
 	}
 
-	return val;
+	return val
 }
 
+func evaluate(infix string) {
 
+	var equ string
 
-func main() {
-	var equ string;
-	
-	equ = "2+3";//*(2^3-5)^(2+1*2)-4
+	equ = infix
 
-	fmt.Println(equ);
+	var operator stack
+	var operand stack
 
-	
-	var operator stack;
-	var operand stack;
+	for i := 0; i < len(equ); i++ {
 
-	for i:=0; i < len(equ); i++ {
-		
-		opchar := string(equ[i]);
+		opchar := string(equ[i])
 
-                fmt.Println(opchar, i, " start ");
-                fmt.Println(equ);
+		// Push the element into operand stack if it is a digit
+		if opchar >= "0" && opchar <= "9" {
 
-		if (opchar == "(") {
-
-			fmt.Println(opchar, i);
-			operator.push("(");
-
-		} else if (opchar >= "0" && opchar <= "9") {
-
-			fmt.Println(opchar, i);
-
-			var val int = 0;
-			
 			for j := i; j < len(equ); j++ {
 
-				var tmp int;
-				opchar := string(equ[j]);
-				if (opchar < "0" && opchar > "9") {
-					break;
+				opchar := string(equ[j])
+				var val int
+				val = string_to_int(opchar)
+				if val < 0 || val > 9 {
+					break
 				}
-                                strVar := opchar;
-				intVar, err := strconv.Atoi(strVar);
-				i++;
-				if err != nil {
-					fmt.Println("Error during conversion")
-					break;
-				}
-				tmp = intVar;
 
-				val = (val * 10) + tmp;
-                                fmt.Println(val, " val ");
-                                
+				i++
+				operand.push(opchar)
 			}
-                        fmt.Println(val, " val aa ");
-			stringVal := strconv.Itoa(val);
-			operand.push(stringVal);
-                        val = 0;
-			i-=2;
-                        opchartmp := string(equ[i]);
-                        fmt.Println(opchartmp);
+			i--
 
-		} else if (opchar == ")") {
-
-			for !operator.isempty() && opchar != "(" {
-				
-				var tmp1 int;
-				opchar1 := operand.top();
-				operand.pop();
-				strVar1 := opchar1;
-				intVar1, err := strconv.Atoi(strVar1);
-				
-				if err != nil {
-					fmt.Println("Error during conversion")
-					break;
-				}
-				tmp1 = intVar1;
-
-				var tmp2 int;
-				opchar2 := operand.top();
-				operand.pop();
-				strVar2 := opchar2;
-				intVar2, err := strconv.Atoi(strVar2);
-				if err != nil {
-					fmt.Println("Error during conversion")
-					break;
-				}
-				tmp2 = intVar2;
-
-				opchar3 := operator.top();
-				operator.pop();
-
-				var now int = applyOp(tmp1, tmp2, opchar3);
-				stringVal := strconv.Itoa(now);
-				operand.push(stringVal);
-			}
-
-			if (!operator.isempty()) {
-				operator.pop();
-			}
 		} else {
+			// Push the element into operator stack if it is a digit
+			operator.push(opchar)
+			// Now if there is a operator then do the operation with the two operands
+			for !operator.isempty() {
+				var tmp1 int
+				opchar1 := operand.top()
+				operand.pop()
+				tmp1 = string_to_int(opchar1)
 
-                                fmt.Println(operator.top(), "OPERATOR top ");
-                                fmt.Println(opchar, "OPERATOR opchar ");                  
+				var tmp2 int
+				opchar2 := operand.top()
+				operand.pop()
+				tmp2 = string_to_int(opchar2)
 
-			for !operator.isempty() && precedence(operator.top()) >= precedence(opchar) {
-                                fmt.Println(operator.top(), "OPERATOR top ");
-                                fmt.Println(opchar, "OPERATOR opchar ");
-				var tmp1 int;
-				opchar1 := operand.top();
-				operand.pop();
-				strVar1 := opchar1;
-				intVar1, err := strconv.Atoi(strVar1);
-				if err != nil {
-					fmt.Println("Error during conversion")
-					break;
-				}
-				tmp1 = intVar1;
+				opchar3 := operator.top()
+				operator.pop()
 
-				var tmp2 int;
-				opchar2 := operand.top();
-				operand.pop();
-				strVar2 := opchar2;
-				intVar2, err := strconv.Atoi(strVar2);
-				if err != nil {
-					fmt.Println("Error during conversion")
-					break;
-				}
-				tmp2 = intVar2;
+				var now int = applyOp(tmp2, tmp1, opchar3)
 
-				opchar3 := operator.top();
-				operator.pop();
-
-				var now int = applyOp(tmp1, tmp2, opchar3);
-				stringVal := strconv.Itoa(now);
-				operand.push(stringVal);
+				tmp3 := int_to_string(now)
+				operand.push(tmp3)
 			}
-
-			operator.push(opchar);
-                        fmt.Println(opchar, "operator IN ");
-
-
 		}
-
-
-		for !operator.isempty() && precedence(operator.top()) >= precedence(opchar) {
-                        fmt.Println(operator.top(), "operator IN IN ");
-			var tmp1 int;
-			opchar1 := operand.top();
-			operand.pop();
-			strVar1 := opchar1;
-			intVar1, err := strconv.Atoi(strVar1);
-			if err != nil {
-				fmt.Println("Error during conversion")
-				break;
-			}
-			tmp1 = intVar1;
-
-			var tmp2 int;
-			opchar2 := operand.top();
-			operand.pop();
-			strVar2 := opchar2;
-			intVar2, err := strconv.Atoi(strVar2);
-			if err != nil {
-				fmt.Println("Error during conversion")
-				break;
-			}
-			tmp2 = intVar2;
-
-			opchar3 := operator.top();
-			operator.pop();
-
-			var now int = applyOp(tmp1, tmp2, opchar3);
-			stringVal := strconv.Itoa(now);
-			operand.push(stringVal);
-		}
-
-
-		
 	}
 
-        fmt.Print(operand.top());
+	fmt.Print("Ans: ", operand.top())
+}
 
+func main() {
+	infix := "((1+2)*(4/2))"
+	postfix := convertToPostfix(infix)
+	evaluate(postfix)
 }
