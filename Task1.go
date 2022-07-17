@@ -6,7 +6,7 @@ import (
 
 type stack []string
 
-// Check is the stack has elements of the stack is empty
+// Function to check if the stack has elements of the stack is empty
 func (st *stack) isempty() bool {
 	return len(*st) == 0
 }
