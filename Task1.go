@@ -6,7 +6,6 @@ import (
 )
 
 type stack []string
-type intStack int
 
 func (st *stack) isempty() bool {
 	return len(*st) == 0;
@@ -67,8 +66,9 @@ func applyOp(a int, b int, c string) int {
 func main() {
 	var equ string;
 	
-	equ = "2+3*(2^3-5)^(2+1*2)-4";
-	fmt.Print(equ);
+	equ = "2+3";//*(2^3-5)^(2+1*2)-4
+
+	fmt.Println(equ);
 
 	
 	var operator stack;
@@ -78,35 +78,47 @@ func main() {
 		
 		opchar := string(equ[i]);
 
+                fmt.Println(opchar, i, " start ");
+                fmt.Println(equ);
+
 		if (opchar == "(") {
-			fmt.Print(opchar);
+
+			fmt.Println(opchar, i);
 			operator.push("(");
+
 		} else if (opchar >= "0" && opchar <= "9") {
-			fmt.Print(opchar);
+
+			fmt.Println(opchar, i);
+
 			var val int = 0;
 			
 			for j := i; j < len(equ); j++ {
-				
+
 				var tmp int;
-				opchar := string(equ[i]);
-				strVar := opchar;
+				opchar := string(equ[j]);
 				if (opchar < "0" && opchar > "9") {
 					break;
 				}
+                                strVar := opchar;
 				intVar, err := strconv.Atoi(strVar);
-				fmt.Print(strVar);
+				i++;
 				if err != nil {
 					fmt.Println("Error during conversion")
-					return
+					break;
 				}
 				tmp = intVar;
 
 				val = (val * 10) + tmp;
+                                fmt.Println(val, " val ");
+                                
 			}
-
+                        fmt.Println(val, " val aa ");
 			stringVal := strconv.Itoa(val);
 			operand.push(stringVal);
-			i--;
+                        val = 0;
+			i-=2;
+                        opchartmp := string(equ[i]);
+                        fmt.Println(opchartmp);
 
 		} else if (opchar == ")") {
 
@@ -117,10 +129,10 @@ func main() {
 				operand.pop();
 				strVar1 := opchar1;
 				intVar1, err := strconv.Atoi(strVar1);
-				fmt.Print(strVar1);
+				
 				if err != nil {
 					fmt.Println("Error during conversion")
-					return
+					break;
 				}
 				tmp1 = intVar1;
 
@@ -131,7 +143,7 @@ func main() {
 				intVar2, err := strconv.Atoi(strVar2);
 				if err != nil {
 					fmt.Println("Error during conversion")
-					return
+					break;
 				}
 				tmp2 = intVar2;
 
@@ -148,9 +160,12 @@ func main() {
 			}
 		} else {
 
+                                fmt.Println(operator.top(), "OPERATOR top ");
+                                fmt.Println(opchar, "OPERATOR opchar ");                  
 
 			for !operator.isempty() && precedence(operator.top()) >= precedence(opchar) {
-
+                                fmt.Println(operator.top(), "OPERATOR top ");
+                                fmt.Println(opchar, "OPERATOR opchar ");
 				var tmp1 int;
 				opchar1 := operand.top();
 				operand.pop();
@@ -158,7 +173,7 @@ func main() {
 				intVar1, err := strconv.Atoi(strVar1);
 				if err != nil {
 					fmt.Println("Error during conversion")
-					return
+					break;
 				}
 				tmp1 = intVar1;
 
@@ -169,7 +184,7 @@ func main() {
 				intVar2, err := strconv.Atoi(strVar2);
 				if err != nil {
 					fmt.Println("Error during conversion")
-					return
+					break;
 				}
 				tmp2 = intVar2;
 
@@ -182,14 +197,14 @@ func main() {
 			}
 
 			operator.push(opchar);
-
+                        fmt.Println(opchar, "operator IN ");
 
 
 		}
 
 
 		for !operator.isempty() && precedence(operator.top()) >= precedence(opchar) {
-
+                        fmt.Println(operator.top(), "operator IN IN ");
 			var tmp1 int;
 			opchar1 := operand.top();
 			operand.pop();
@@ -197,7 +212,7 @@ func main() {
 			intVar1, err := strconv.Atoi(strVar1);
 			if err != nil {
 				fmt.Println("Error during conversion")
-				return
+				break;
 			}
 			tmp1 = intVar1;
 
@@ -208,7 +223,7 @@ func main() {
 			intVar2, err := strconv.Atoi(strVar2);
 			if err != nil {
 				fmt.Println("Error during conversion")
-				return
+				break;
 			}
 			tmp2 = intVar2;
 
@@ -221,7 +236,9 @@ func main() {
 		}
 
 
-		fmt.Print(operand.top());
+		
 	}
+
+        fmt.Print(operand.top());
 
 }
