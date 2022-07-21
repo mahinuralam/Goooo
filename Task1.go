@@ -182,7 +182,7 @@ func evaluate(infix string) {
 
 func main() {
 
-	/* Equations and outpus
+	/* Equations and outputs
 	((1+2)*(4/2)) Ans: 6
 	(5/5)*(4/2)+5-4 Ans: 3
 	((8*2)+(5/5)*5)+(5/5)*(4/2)+5-4 Ans: 63
